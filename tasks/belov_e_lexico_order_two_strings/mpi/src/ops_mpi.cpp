@@ -26,7 +26,9 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
       current += std::get<0>(GetInput())[i];
     }
   }
-  if (!current.empty()) temp.push_back(current);
+  if (!current.empty()) {
+    temp.push_back(current);
+  }
   std::get<0>(GetProccesedInput()) = temp;
 
   std::vector<std::string>().swap(temp);
@@ -39,13 +41,17 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
       current += std::get<1>(GetInput())[i];
     }
   }
-  if (!current.empty()) temp.push_back(current);
+  if (!current.empty()) {
+    temp.push_back(current);
+  }
   std::get<1>(GetProccesedInput()) = temp;
   return std::get<0>(GetProccesedInput()).size() > 0 && std::get<1>(GetProccesedInput()).size() > 0;
 }
 
 static bool is_part_sorted(const std::vector<std::string> &words, int begin, int end) {
-  if (end <= begin) { return true; }
+  if (end <= begin) {
+    return true;
+  }
   for (size_t i = begin; i < (size_t)end - 1; i++) {
     if (words[i] > words[i + 1]) {
       return false;

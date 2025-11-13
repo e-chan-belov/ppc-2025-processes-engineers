@@ -25,7 +25,9 @@ bool BelovELexicoOrderTwoStringsSEQ::PreProcessingImpl() {
       current += std::get<0>(GetInput())[i];
     }
   }
-  if (!current.empty()) temp.push_back(current);
+  if (!current.empty()) {
+    temp.push_back(current);
+  }
   std::get<0>(GetProccesedInput()) = temp;
 
   std::vector<std::string>().swap(temp);
@@ -38,7 +40,9 @@ bool BelovELexicoOrderTwoStringsSEQ::PreProcessingImpl() {
       current += std::get<1>(GetInput())[i];
     }
   }
-  if (!current.empty()) temp.push_back(current);
+  if (!current.empty()) {
+    temp.push_back(current);
+  }
   std::get<1>(GetProccesedInput()) = temp;
   return std::get<0>(GetProccesedInput()).size() > 0 && std::get<1>(GetProccesedInput()).size() > 0;
 }
