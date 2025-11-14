@@ -4,8 +4,8 @@
 #include <ctime>
 #include <random>
 #include <string>
-#include <vector>
 #include <tuple>
+#include <vector>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "belov_e_lexico_order_two_strings/mpi/include/ops_mpi.hpp"
@@ -36,7 +36,7 @@ class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, O
   static std::string GenerateWord(size_t size) {
     static const std::string kAlphabet = "abcdefghijklmnopqrstuvwxyz";
     static std::mt19937 gen(std::random_device{}());
-    std::uniform_int_distribution<int> len_dist(static_cast<int>(size) / 4, static_cast<int>(size)/ 2);
+    std::uniform_int_distribution<int> len_dist(static_cast<int>(size) / 4, static_cast<int>(size) / 2);
     std::uniform_int_distribution<int> char_dist(0, static_cast<int>(kAlphabet.size()) - 1);
 
     int len = len_dist(gen);

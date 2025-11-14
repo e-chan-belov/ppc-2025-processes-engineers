@@ -1,7 +1,7 @@
 #pragma once
-#include <vector>
 #include <string>
 #include <tuple>
+#include <vector>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "task/include/task.hpp"

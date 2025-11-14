@@ -1,10 +1,11 @@
 #include "belov_e_lexico_order_two_strings/mpi/include/ops_mpi.hpp"
 
 #include <mpi.h>
-#include <vector>
-#include <string>
+
 #include <algorithm>
 #include <cstddef>
+#include <string>
+#include <vector>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 
@@ -22,7 +23,7 @@ bool BelovELexicoOrderTwoStringsMPI::ValidationImpl() {
 bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
   std::vector<std::string> temp;
   std::string current;
-  for (auto& ch : std::get<0>(GetInput())) {
+  for (auto &ch : std::get<0>(GetInput())) {
     if (ch == ' ') {
       temp.push_back(current);
       current = "";
@@ -37,7 +38,7 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
 
   std::vector<std::string>().swap(temp);
   current = "";
-  for (auto& ch : std::get<1>(GetInput())) {
+  for (auto &ch : std::get<1>(GetInput())) {
     if (ch == ' ') {
       temp.push_back(current);
       current = "";

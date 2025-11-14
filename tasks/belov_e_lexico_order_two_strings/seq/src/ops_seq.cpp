@@ -16,7 +16,7 @@ bool BelovELexicoOrderTwoStringsSEQ::ValidationImpl() {
 bool BelovELexicoOrderTwoStringsSEQ::PreProcessingImpl() {
   std::vector<std::string> temp;
   std::string current;
-  for (auto& ch : std::get<0>(GetInput())) {
+  for (auto &ch : std::get<0>(GetInput())) {
     if (ch == ' ') {
       temp.push_back(current);
       current = "";
@@ -31,7 +31,7 @@ bool BelovELexicoOrderTwoStringsSEQ::PreProcessingImpl() {
 
   std::vector<std::string>().swap(temp);
   current = "";
-  for (auto& ch : std::get<1>(GetInput())) {
+  for (auto &ch : std::get<1>(GetInput())) {
     if (ch == ' ') {
       temp.push_back(current);
       current = "";
