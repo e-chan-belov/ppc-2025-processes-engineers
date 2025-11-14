@@ -1,5 +1,9 @@
 #include "belov_e_lexico_order_two_strings/seq/include/ops_seq.hpp"
 
+#include <cstddef>
+#include <string>
+#include <vector>
+
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 
 namespace belov_e_lexico_order_two_strings {
