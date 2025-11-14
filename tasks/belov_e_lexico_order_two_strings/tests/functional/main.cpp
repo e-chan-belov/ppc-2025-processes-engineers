@@ -1,19 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <array>
 #include <cstddef>
-#include <cstdint>
 #include <fstream>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 #include <tuple>
-#include <utility>
-#include <vector>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "belov_e_lexico_order_two_strings/mpi/include/ops_mpi.hpp"
@@ -50,13 +41,13 @@ class BelovERunFuncTestsProcesses : public ppc::util::BaseRunFuncTests<InType, O
   }
 
   InType GetTestInputData() final {
-    return std::tuple<std::string, std::string>(str1_, str2_);
+    return {str1_, str2_};
   }
 
  private:
   std::string str1_;
   std::string str2_;
-  bool ans_;
+  bool ans_ = false;
 };
 
 namespace {

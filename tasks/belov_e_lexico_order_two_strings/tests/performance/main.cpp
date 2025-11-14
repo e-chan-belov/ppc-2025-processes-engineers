@@ -2,10 +2,10 @@
 
 #include <algorithm>
 #include <ctime>
-#include <iostream>
 #include <random>
 #include <string>
 #include <vector>
+#include <tuple>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "belov_e_lexico_order_two_strings/mpi/include/ops_mpi.hpp"
@@ -15,14 +15,14 @@
 namespace belov_e_lexico_order_two_strings {
 
 class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const size_t size_params = 100;
-  InType input_data_{};
+  const size_t size_params_ = 1000;
+  InType input_data_;
   OutType output_data_{};
 
   void SetUp() override {
-    std::tuple<std::string, std::string, int> generated = generateInputData(size_params);
+    std::tuple<std::string, std::string, int> generated = GenerateInputData(size_params_);
     input_data_ = std::make_tuple(std::get<0>(generated), std::get<1>(generated));
-    output_data_ = std::get<2>(generated);
+    output_data_ = static_cast<bool>(std::get<2>(generated));
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
@@ -33,28 +33,29 @@ class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, O
     return input_data_;
   }
 
-  std::string generateWord(size_t size) {
-    static const std::string alphabet = "abcdefghijklmnopqrstuvwxyz";
+  static std::string GenerateWord(size_t size) {
+    static const std::string kAlphabet = "abcdefghijklmnopqrstuvwxyz";
     static std::mt19937 gen(std::random_device{}());
-    std::uniform_int_distribution<int> len_dist(size / 4, size / 2);
-    std::uniform_int_distribution<int> char_dist(0, alphabet.size() - 1);
+    std::uniform_int_distribution<int> len_dist(static_cast<int>(size) / 4, static_cast<int>(size)/ 2);
+    std::uniform_int_distribution<int> char_dist(0, static_cast<int>(kAlphabet.size()) - 1);
 
     int len = len_dist(gen);
     std::string word;
     for (int i = 0; i < len; ++i) {
-      word += alphabet[char_dist(gen)];
+      word += kAlphabet[char_dist(gen)];
     }
 
     return word;
   }
-  std::tuple<std::vector<std::string>, std::vector<std::string>> generateTwoSortedSentence(size_t size) {
+  static std::tuple<std::vector<std::string>, std::vector<std::string>> GenerateTwoSortedSentence(size_t size) {
     std::vector<std::string> vec;
     vec.reserve(size * 2);
     for (size_t i = 0; i < size * 2; i++) {
-      vec.push_back(generateWord(size));
+      vec.push_back(GenerateWord(size));
     }
-    std::sort(vec.begin(), vec.end());
-    std::vector<std::string> first, second;
+    std::ranges::sort(vec);
+    std::vector<std::string> first;
+    std::vector<std::string> second;
     first.reserve(size);
     second.reserve(size);
 
@@ -66,7 +67,7 @@ class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, O
     }
     return std::make_tuple(first, second);
   }
-  std::string vectorOfWordsToString(const std::vector<std::string> &sentence) {
+  static std::string VectorOfWordsToString(const std::vector<std::string> &sentence) {
     std::string temp;
     for (size_t i = 0; i < sentence.size() - 1; i++) {
       temp += sentence[i] + " ";
@@ -75,9 +76,9 @@ class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, O
     return temp;
   }
 
-  std::tuple<std::string, std::string, int> generateInputData(size_t size) {
-    std::tuple<std::vector<std::string>, std::vector<std::string>> ans = generateTwoSortedSentence(size);
-    return std::make_tuple(vectorOfWordsToString(std::get<0>(ans)), vectorOfWordsToString(std::get<1>(ans)), 1);
+  static std::tuple<std::string, std::string, int> GenerateInputData(size_t size) {
+    std::tuple<std::vector<std::string>, std::vector<std::string>> ans = GenerateTwoSortedSentence(size);
+    return std::make_tuple(VectorOfWordsToString(std::get<0>(ans)), VectorOfWordsToString(std::get<1>(ans)), 1);
   }
 };
 

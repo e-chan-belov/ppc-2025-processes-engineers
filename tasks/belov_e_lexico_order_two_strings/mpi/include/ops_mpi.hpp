@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <string>
+#include <tuple>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "task/include/task.hpp"
@@ -23,4 +25,6 @@ class BelovELexicoOrderTwoStringsMPI : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 };
+bool IsPartSorted(const std::vector<std::string> &words, int begin, int end);
+int CeilDiv(int a, int b);
 }  // namespace belov_e_lexico_order_two_strings
