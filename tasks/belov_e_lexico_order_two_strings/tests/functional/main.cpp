@@ -55,7 +55,7 @@ TEST_P(BelovERunFuncTestsProcesses, LexicoOrderTwoStringsFromFiles) {
   ExecuteTest(GetParam());
 }
 
-const std::array<TestType, 3> kTestParam = {"test1.txt", "test2.txt", "test3.txt"};
+const std::array<TestType, 4> kTestParam = {"test1.txt", "test2.txt", "test3.txt", "test4.txt"};
 
 const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<BelovELexicoOrderTwoStringsMPI, InType>(
                                                kTestParam, PPC_SETTINGS_belov_e_lexico_order_two_strings),
