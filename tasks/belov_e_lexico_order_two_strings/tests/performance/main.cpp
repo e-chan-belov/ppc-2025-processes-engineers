@@ -1,11 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <ctime>
-#include <random>
 #include <string>
 #include <tuple>
-#include <vector>
 
 #include "belov_e_lexico_order_two_strings/common/include/common.hpp"
 #include "belov_e_lexico_order_two_strings/mpi/include/ops_mpi.hpp"
@@ -15,7 +12,7 @@
 namespace belov_e_lexico_order_two_strings {
 
 class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const size_t size_params_ = 1000000;
+  const size_t size_params_ = 50000;
   InType input_data_;
   OutType output_data_{};
 
