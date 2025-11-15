@@ -1,0 +1,30 @@
+#pragma once
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include "belov_e_lexico_order_two_strings/common/include/common.hpp"
+#include "task/include/task.hpp"
+
+namespace belov_e_lexico_order_two_strings {
+class BelovELexicoOrderTwoStringsMPI : public BaseTask {
+ public:
+  static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
+    return ppc::task::TypeOfTask::kMPI;
+  }
+  explicit BelovELexicoOrderTwoStringsMPI(const InType &in);
+
+ private:
+  std::tuple<std::vector<std::string>, std::vector<std::string>> proccesed_input_;
+  std::tuple<std::vector<std::string>, std::vector<std::string>> &GetProccesedInput() {
+    return proccesed_input_;
+  }
+
+  bool ValidationImpl() override;
+  bool PreProcessingImpl() override;
+  bool RunImpl() override;
+  bool PostProcessingImpl() override;
+};
+bool IsPartSorted(const std::vector<std::string> &words, int begin, int end);
+int CeilDiv(int a, int b);
+}  // namespace belov_e_lexico_order_two_strings
