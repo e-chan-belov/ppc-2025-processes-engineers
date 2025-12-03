@@ -54,20 +54,47 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
   return !std::get<0>(GetProccesedInput()).empty() && !std::get<1>(GetProccesedInput()).empty();
 }
 
-bool IsPartSorted(const std::vector<std::string> &words, int begin, int end) {
-  if (end <= begin) {
-    return true;
-  }
-  for (size_t i = begin; i < static_cast<size_t>(end) - 1; i++) {
-    if (words[i] > words[i + 1]) {
-      return false;
+ChunkAns ChunkCheck(const std::vector<std::string> &first, const std::vector<std::string> &second, int begin, int end) {
+  ChunkAns ans{-1, 0};
+  for (int i = begin; i < end; i++) {
+    if (first[i] < second[i]) {
+      ans = {i, -1};
+      return ans;
+    }
+    if (first[i] > second[i]) {
+      ans = {i, 1};
+      return ans;
     }
   }
-  return true;
+  return ans;
 }
 
 int CeilDiv(int a, int b) {
   return (a + b - 1) / b;
+}
+
+void BcastVectorOfStrings(std::vector<std::string> &vec, int n, MPI_Comm comm) {
+  int rank;
+  MPI_Comm_rank(comm, &rank);
+
+  if (rank != 0) {
+    vec.resize(n);
+  }
+
+  for (int i = 0; i < n; i++) {
+    int len = 0;
+    if (rank == 0) {
+      len = vec[i].size();
+    }
+
+    MPI_Bcast(&len, 1, MPI_INT, 0, comm);
+
+    if (rank != 0) {
+      vec[i].resize(len);
+    }
+
+    MPI_Bcast(vec[i].data(), len, MPI_CHAR, 0, comm);
+  }
 }
 
 bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
@@ -77,29 +104,60 @@ bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  const std::vector<std::string> &first = std::get<0>(GetProccesedInput());
-  const std::vector<std::string> &second = std::get<1>(GetProccesedInput());
+  std::vector<std::string> first, second;
 
-  int n1 = static_cast<int>(first.size());
-  int n2 = static_cast<int>(second.size());
+  int n1, n2, n;
 
-  bool local_ans = true;
+  if (rank == 0) {
+    first = std::get<0>(GetProccesedInput());
+    second = std::get<1>(GetProccesedInput());
 
-  if (rank < mpi_size / 2) {
-    int chunk = CeilDiv(n1, mpi_size / 2);
-    int begin = rank * chunk;
-    int end = std::min(begin + chunk + 1, n1);
-    local_ans = IsPartSorted(first, begin, end);
-  } else {
-    int chunk = CeilDiv(n2, (mpi_size - (mpi_size / 2)));
-    int begin = (rank - (mpi_size / 2)) * chunk;
-    int end = std::min(begin + chunk + 1, n2);
-    local_ans = IsPartSorted(second, begin, end);
+    n1 = static_cast<int>(first.size());
+    n2 = static_cast<int>(second.size());
   }
 
-  bool ans = false;
-  MPI_Allreduce(&local_ans, &ans, 1, MPI_C_BOOL, MPI_LAND, MPI_COMM_WORLD);
-  GetOutput() = ((first.back() <= second.front()) && ans);
+  MPI_Bcast(&n1, 1, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&n2, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+  n = std::min(n1, n2);
+
+  BcastVectorOfStrings(first, n, MPI_COMM_WORLD);
+  BcastVectorOfStrings(second, n, MPI_COMM_WORLD);
+
+  int chunk = CeilDiv(n, mpi_size);
+  int begin = rank * chunk;
+  int end = std::min(n, begin + chunk);
+
+  ChunkAns local_ans;
+
+  local_ans = ChunkCheck(first, second, begin, end);
+
+  std::vector<ChunkAns> results(mpi_size);
+  MPI_Gather(&local_ans, sizeof(ChunkAns), MPI_BYTE, results.data(), sizeof(ChunkAns), MPI_BYTE, 0, MPI_COMM_WORLD);
+
+  bool result;
+
+  if (rank == 0) {
+    int best_index = std::numeric_limits<int>::max();
+    int cmp_ans = 0;
+
+    for (auto &p : results) {
+      if (p.index >= 0 && p.index < best_index) {
+        best_index = p.index;
+        cmp_ans = p.cmp_flag;
+      }
+    }
+    if (best_index != std::numeric_limits<int>::max()) {
+      result = (cmp_ans < 0);
+    } else {
+      result = (n1 < n2);
+    }
+  }
+
+  MPI_Bcast(&result, 1, MPI_CXX_BOOL, 0, MPI_COMM_WORLD);
+
+  GetOutput() = result;
+
   MPI_Barrier(MPI_COMM_WORLD);
   return true;
 }

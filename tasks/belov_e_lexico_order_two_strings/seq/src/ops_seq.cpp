@@ -55,21 +55,26 @@ bool BelovELexicoOrderTwoStringsSEQ::RunImpl() {
   const std::vector<std::string> &first = std::get<0>(GetProccesedInput());
   const std::vector<std::string> &second = std::get<1>(GetProccesedInput());
 
-  for (size_t i = 0; i < first.size() - 1; i++) {
-    if (first[i] > first[i + 1]) {
-      GetOutput() = false;
-      return true;
+  bool flag = false;
+  bool ans;
+  auto iter1 = first.begin();
+  auto iter2 = second.begin();
+  for (; iter1 != first.end() && iter2 != second.end(); iter1++, iter2++) {
+    if (*iter1 < *iter2) {
+      ans = true;
+      flag = true;
+      break;
+    } else if (*iter1 != *iter2) {
+      ans = false;
+      flag = true;
+      break;
     }
   }
-
-  for (size_t i = 0; i < second.size() - 1; i++) {
-    if (second[i] > second[i + 1]) {
-      GetOutput() = false;
-      return true;
-    }
+  if (flag == true) {
+    GetOutput() = ans;
+  } else {
+    GetOutput() = (iter1 == first.end()) && (iter2 != second.end());
   }
-
-  GetOutput() = first.back() <= second.front();
 
   return true;
 }

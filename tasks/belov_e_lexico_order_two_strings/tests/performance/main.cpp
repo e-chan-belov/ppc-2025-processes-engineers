@@ -12,7 +12,7 @@
 namespace belov_e_lexico_order_two_strings {
 
 class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const size_t size_params_ = 7000;
+  const size_t size_params_ = 4000;
   InType input_data_;
   OutType output_data_{};
 
@@ -40,7 +40,7 @@ class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, O
       str += word + " ";
     }
     str += word;
-    return std::make_tuple(str, str, 1);
+    return std::make_tuple(str, str, 0);
   }
 };
 

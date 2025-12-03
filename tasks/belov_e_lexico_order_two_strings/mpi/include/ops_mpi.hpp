@@ -1,4 +1,7 @@
 #pragma once
+
+#include <mpi.h>
+
 #include <string>
 #include <tuple>
 #include <vector>
@@ -7,6 +10,11 @@
 #include "task/include/task.hpp"
 
 namespace belov_e_lexico_order_two_strings {
+struct ChunkAns {
+  int index;
+  int cmp_flag;
+};
+
 class BelovELexicoOrderTwoStringsMPI : public BaseTask {
  public:
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
@@ -25,6 +33,7 @@ class BelovELexicoOrderTwoStringsMPI : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 };
-bool IsPartSorted(const std::vector<std::string> &words, int begin, int end);
+void BcastVectorOfStrings(std::vector<std::string> &vec, int n, MPI_Comm comm);
+ChunkAns ChunkCheck(const std::vector<std::string> &first, const std::vector<std::string> &second, int begin, int end);
 int CeilDiv(int a, int b);
 }  // namespace belov_e_lexico_order_two_strings
