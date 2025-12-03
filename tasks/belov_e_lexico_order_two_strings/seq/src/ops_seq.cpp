@@ -63,7 +63,7 @@ bool BelovELexicoOrderTwoStringsSEQ::RunImpl() {
       ans = true;
       flag = true;
       break;
-    } 
+    }
     if (*iter1 != *iter2) {
       ans = false;
       flag = true;

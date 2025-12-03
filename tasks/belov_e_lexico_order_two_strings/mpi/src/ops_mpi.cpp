@@ -55,10 +55,10 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
 }
 
 ChunkAns ChunkCheck(const std::vector<std::string> &first, const std::vector<std::string> &second, int begin, int end) {
-  ChunkAns ans{.index = -1,.cmp_flag = 0};
+  ChunkAns ans{.index = -1, .cmp_flag = 0};
   for (int i = begin; i < end; i++) {
     if (first[i] < second[i]) {
-      ans = {.index = i,.cmp_flag = -1};
+      ans = {.index = i, .cmp_flag = -1};
       return ans;
     }
     if (first[i] > second[i]) {
@@ -107,9 +107,9 @@ bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
   std::vector<std::string> first;
   std::vector<std::string> second;
 
-  int n1;
-  int n2;
-  int n;
+  int n1 = 0;
+  int n2 = 0;
+  int n = 0;
 
   if (rank == 0) {
     first = std::get<0>(GetProccesedInput());
