@@ -1,6 +1,5 @@
 #include "belov_e_lexico_order_two_strings/seq/include/ops_seq.hpp"
 
-#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -56,7 +55,7 @@ bool BelovELexicoOrderTwoStringsSEQ::RunImpl() {
   const std::vector<std::string> &second = std::get<1>(GetProccesedInput());
 
   bool flag = false;
-  bool ans;
+  bool ans = false;
   auto iter1 = first.begin();
   auto iter2 = second.begin();
   for (; iter1 != first.end() && iter2 != second.end(); iter1++, iter2++) {
@@ -64,13 +63,14 @@ bool BelovELexicoOrderTwoStringsSEQ::RunImpl() {
       ans = true;
       flag = true;
       break;
-    } else if (*iter1 != *iter2) {
+    } 
+    if (*iter1 != *iter2) {
       ans = false;
       flag = true;
       break;
     }
   }
-  if (flag == true) {
+  if (flag) {
     GetOutput() = ans;
   } else {
     GetOutput() = (iter1 == first.end()) && (iter2 != second.end());

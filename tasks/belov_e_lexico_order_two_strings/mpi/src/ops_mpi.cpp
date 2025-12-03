@@ -3,7 +3,7 @@
 #include <mpi.h>
 
 #include <algorithm>
-#include <cstddef>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -55,14 +55,14 @@ bool BelovELexicoOrderTwoStringsMPI::PreProcessingImpl() {
 }
 
 ChunkAns ChunkCheck(const std::vector<std::string> &first, const std::vector<std::string> &second, int begin, int end) {
-  ChunkAns ans{-1, 0};
+  ChunkAns ans{.index = -1,.cmp_flag = 0};
   for (int i = begin; i < end; i++) {
     if (first[i] < second[i]) {
-      ans = {i, -1};
+      ans = {.index = i,.cmp_flag = -1};
       return ans;
     }
     if (first[i] > second[i]) {
-      ans = {i, 1};
+      ans = {.index = i, .cmp_flag = 1};
       return ans;
     }
   }
@@ -74,7 +74,7 @@ int CeilDiv(int a, int b) {
 }
 
 void BcastVectorOfStrings(std::vector<std::string> &vec, int n, MPI_Comm comm) {
-  int rank;
+  int rank = 0;
   MPI_Comm_rank(comm, &rank);
 
   if (rank != 0) {
@@ -84,7 +84,7 @@ void BcastVectorOfStrings(std::vector<std::string> &vec, int n, MPI_Comm comm) {
   for (int i = 0; i < n; i++) {
     int len = 0;
     if (rank == 0) {
-      len = vec[i].size();
+      len = static_cast<int>(vec[i].size());
     }
 
     MPI_Bcast(&len, 1, MPI_INT, 0, comm);
@@ -104,9 +104,12 @@ bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  std::vector<std::string> first, second;
+  std::vector<std::string> first;
+  std::vector<std::string> second;
 
-  int n1, n2, n;
+  int n1;
+  int n2;
+  int n;
 
   if (rank == 0) {
     first = std::get<0>(GetProccesedInput());
@@ -128,14 +131,14 @@ bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
   int begin = rank * chunk;
   int end = std::min(n, begin + chunk);
 
-  ChunkAns local_ans;
+  ChunkAns local_ans = {.index = -1, .cmp_flag = 0};
 
   local_ans = ChunkCheck(first, second, begin, end);
 
   std::vector<ChunkAns> results(mpi_size);
   MPI_Gather(&local_ans, sizeof(ChunkAns), MPI_BYTE, results.data(), sizeof(ChunkAns), MPI_BYTE, 0, MPI_COMM_WORLD);
 
-  bool result;
+  bool result = false;
 
   if (rank == 0) {
     int best_index = std::numeric_limits<int>::max();
@@ -154,7 +157,7 @@ bool BelovELexicoOrderTwoStringsMPI::RunImpl() {
     }
   }
 
-  MPI_Bcast(&result, 1, MPI_CXX_BOOL, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&result, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
 
   GetOutput() = result;
 
