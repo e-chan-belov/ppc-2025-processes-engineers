@@ -1,13 +1,12 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <vector>
+#include <cstddef>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 #include "belov_e_bubble_sort/mpi/include/ops_mpi.hpp"
 #include "belov_e_bubble_sort/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
-#include "util/include/util.hpp"
 
 namespace belov_e_bubble_sort {
 class BelovEBubbleSortRunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
@@ -17,12 +16,12 @@ class BelovEBubbleSortRunPerfTestsProcesses : public ppc::util::BaseRunPerfTests
   void SetUp() override {
     input_data_.resize(size_params_);
     for (size_t i = 0; i < size_params_; i++) {
-      input_data_[i] = size_params_ - i;
+      input_data_[i] = static_cast<int>(size_params_) - i;
     }
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    return std::is_sorted(output_data.begin(), output_data.end());
+    return std::ranges::is_sorted(output_data);
   }
 
   InType GetTestInputData() final {

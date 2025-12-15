@@ -3,6 +3,9 @@
 #include "belov_e_bubble_sort/common/include/common.hpp"
 #include "task/include/task.hpp"
 
+#include <vector>
+#include <mpi.h>
+
 namespace belov_e_bubble_sort {
 class BelovEBubbleSortMPI : public BaseTask {
  public:
@@ -20,4 +23,8 @@ int CeilDiv(int a, int b);
 void BubbleSort(std::vector<int> &arr);
 std::vector<int> LeftMerge(const std::vector<int> &left, const std::vector<int> &right);
 std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int> &right);
+void LeftProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm);
+void RightProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm);
+void EvenPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm);
+void OddPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm);
 }  // namespace belov_e_bubble_sort

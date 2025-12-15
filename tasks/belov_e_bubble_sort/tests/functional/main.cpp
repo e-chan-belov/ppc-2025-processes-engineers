@@ -1,7 +1,11 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <vector>
+#include <string>
+#include <cstddef>
+#include <fstream>
+#include <array>
+#include <tuple>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 #include "belov_e_bubble_sort/mpi/include/ops_mpi.hpp"
@@ -23,9 +27,9 @@ class BelovEBubbleSortRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests
     std::string path = ppc::util::GetAbsoluteTaskPath(PPC_ID_belov_e_bubble_sort, params);
     std::ifstream file(path);
 
-    int value;
+    int value = 0;
     while (file >> value) {
-      in.push_back(value);
+      in_.push_back(value);
     }
 
     file.close();
@@ -35,11 +39,11 @@ class BelovEBubbleSortRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests
   }
 
   InType GetTestInputData() final {
-    return in;
+    return in_;
   }
 
  private:
-  InType in;
+  InType in_;
 };
 
 namespace {

@@ -1,6 +1,7 @@
 #include "belov_e_bubble_sort/seq/include/ops_seq.hpp"
 
 #include <vector>
+#include <cstddef>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 
@@ -26,7 +27,7 @@ bool BelovEBubbleSortSEQ::RunImpl() {
   std::vector<int> data = GetInput();
   size_t n = data.size();
 
-  int temp;
+  int temp = 0;
 
   std::vector<int> &out = GetOutput();
   for (size_t i = 0; i < n; out[n - i - 1] = data[n - i - 1], i++) {

@@ -6,6 +6,7 @@
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <cstddef>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 
@@ -46,17 +47,58 @@ std::vector<int> LeftMerge(const std::vector<int> &left, const std::vector<int> 
   std::vector<int> result;
   result.reserve(left.size() + right.size());
 
-  std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(result));
+  std::ranges::merge(left, right, std::back_inserter(result));
 
-  return std::vector<int>(result.begin(), result.begin() + left.size());
+  return {result.begin(), std::next(result.begin(), left.size())};
 }
 std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int> &right) {
   std::vector<int> result;
   result.reserve(left.size() + right.size());
 
-  std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(result));
+  std::ranges::merge(left, right, std::back_inserter(result));
 
-  return std::vector<int>(result.end() - right.size(), result.end());
+  return {std::prev(result.end(), right.size()), result.end()};
+}
+
+void LeftProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
+    std::vector<int> right_arr;
+    right_arr.resize(arrays_sizes[rank + 1]);
+    MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank + 1, 0, right_arr.data(), arrays_sizes[rank + 1],
+                 MPI_INT, rank + 1, 0, comm, MPI_STATUS_IGNORE);
+    local_arr = LeftMerge(local_arr, right_arr);
+}
+
+void RightProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
+    std::vector<int> left_arr;
+    left_arr.resize(arrays_sizes[rank - 1]);
+    MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank - 1, 0, left_arr.data(), arrays_sizes[rank - 1],
+                 MPI_INT, rank - 1, 0, comm, MPI_STATUS_IGNORE);
+    local_arr = RightMerge(left_arr, local_arr);
+}
+
+void EvenPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
+    if (mpi_size % 2 != 0 && rank == mpi_size - 1) {
+        return;
+      }
+      if (rank % 2 == 0) {
+        LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+      } else {
+        RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+      }
+}
+
+void OddPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
+    if (rank == 0) {
+        return;
+      }
+      if (mpi_size % 2 == 0 && rank == mpi_size - 1) {
+        return;
+      }
+      if (rank % 2 == 0) {
+        RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+      } else {
+        LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+      }
 }
 
 bool BelovEBubbleSortMPI::RunImpl() {
@@ -88,6 +130,9 @@ bool BelovEBubbleSortMPI::RunImpl() {
 
   std::vector<int> displs;
   displs.resize(mpi_size);
+  if (mpi_size == 0) {
+    return false;
+  }
   displs[0] = 0;
   for (int i = 1; i < mpi_size; i++) {
     displs[i] = displs[i - 1] + arrays_sizes[i - 1];
@@ -100,42 +145,11 @@ bool BelovEBubbleSortMPI::RunImpl() {
 
   for (int i = 0; i < mpi_size + 1; i++) {
     if (i % 2 == 0) {
-      if (mpi_size % 2 != 0 && rank == mpi_size - 1) {
-        continue;
-      }
-      if (rank % 2 == 0) {
-        std::vector<int> right_arr;
-        right_arr.resize(arrays_sizes[rank + 1]);
-        MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank + 1, 0, right_arr.data(), arrays_sizes[rank + 1],
-                     MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        local_arr = LeftMerge(local_arr, right_arr);
-      } else {
-        std::vector<int> left_arr;
-        left_arr.resize(arrays_sizes[rank - 1]);
-        MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank - 1, 0, left_arr.data(), arrays_sizes[rank - 1],
-                     MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        local_arr = RightMerge(left_arr, local_arr);
-      }
+        EvenPhase(rank, mpi_size,
+        local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
     } else {
-      if (rank == 0) {
-        continue;
-      }
-      if (mpi_size % 2 == 0 && rank == mpi_size - 1) {
-        continue;
-      }
-      if (rank % 2 == 0) {
-        std::vector<int> left_arr;
-        left_arr.resize(arrays_sizes[rank - 1]);
-        MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank - 1, 0, left_arr.data(), arrays_sizes[rank - 1],
-                     MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        local_arr = RightMerge(left_arr, local_arr);
-      } else {
-        std::vector<int> right_arr;
-        right_arr.resize(arrays_sizes[rank + 1]);
-        MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank + 1, 0, right_arr.data(), arrays_sizes[rank + 1],
-                     MPI_INT, rank + 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        local_arr = LeftMerge(local_arr, right_arr);
-      }
+        OddPhase(rank, mpi_size,
+        local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
     }
   }
 
