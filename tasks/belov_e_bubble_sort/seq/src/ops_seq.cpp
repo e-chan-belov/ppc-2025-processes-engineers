@@ -1,7 +1,7 @@
 #include "belov_e_bubble_sort/seq/include/ops_seq.hpp"
 
-#include <vector>
 #include <cstddef>
+#include <vector>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 

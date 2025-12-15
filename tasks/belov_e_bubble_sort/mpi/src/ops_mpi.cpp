@@ -3,10 +3,10 @@
 #include <mpi.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <utility>
 #include <vector>
-#include <cstddef>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
 
@@ -60,45 +60,49 @@ std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int>
   return {std::prev(result.end(), right.size()), result.end()};
 }
 
-void LeftProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
-    std::vector<int> right_arr;
-    right_arr.resize(arrays_sizes[rank + 1]);
-    MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank + 1, 0, right_arr.data(), arrays_sizes[rank + 1],
-                 MPI_INT, rank + 1, 0, comm, MPI_STATUS_IGNORE);
-    local_arr = LeftMerge(local_arr, right_arr);
+void LeftProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, std::vector<int> &arrays_sizes,
+                 MPI_Comm comm) {
+  std::vector<int> right_arr;
+  right_arr.resize(arrays_sizes[rank + 1]);
+  MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank + 1, 0, right_arr.data(), arrays_sizes[rank + 1],
+               MPI_INT, rank + 1, 0, comm, MPI_STATUS_IGNORE);
+  local_arr = LeftMerge(local_arr, right_arr);
 }
 
-void RightProcAct(int rank, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
-    std::vector<int> left_arr;
-    left_arr.resize(arrays_sizes[rank - 1]);
-    MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank - 1, 0, left_arr.data(), arrays_sizes[rank - 1],
-                 MPI_INT, rank - 1, 0, comm, MPI_STATUS_IGNORE);
-    local_arr = RightMerge(left_arr, local_arr);
+void RightProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, std::vector<int> &arrays_sizes,
+                  MPI_Comm comm) {
+  std::vector<int> left_arr;
+  left_arr.resize(arrays_sizes[rank - 1]);
+  MPI_Sendrecv(local_arr.data(), local_arr_size, MPI_INT, rank - 1, 0, left_arr.data(), arrays_sizes[rank - 1], MPI_INT,
+               rank - 1, 0, comm, MPI_STATUS_IGNORE);
+  local_arr = RightMerge(left_arr, local_arr);
 }
 
-void EvenPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
-    if (mpi_size % 2 != 0 && rank == mpi_size - 1) {
-        return;
-      }
-      if (rank % 2 == 0) {
-        LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
-      } else {
-        RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
-      }
+void EvenPhase(int rank, int mpi_size, std::vector<int> &local_arr, int local_arr_size, std::vector<int> &arrays_sizes,
+               MPI_Comm comm) {
+  if (mpi_size % 2 != 0 && rank == mpi_size - 1) {
+    return;
+  }
+  if (rank % 2 == 0) {
+    LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+  } else {
+    RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+  }
 }
 
-void OddPhase(int rank, int mpi_size, std::vector<int>& local_arr, int local_arr_size, std::vector<int>& arrays_sizes, MPI_Comm comm) {
-    if (rank == 0) {
-        return;
-      }
-      if (mpi_size % 2 == 0 && rank == mpi_size - 1) {
-        return;
-      }
-      if (rank % 2 == 0) {
-        RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
-      } else {
-        LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
-      }
+void OddPhase(int rank, int mpi_size, std::vector<int> &local_arr, int local_arr_size, std::vector<int> &arrays_sizes,
+              MPI_Comm comm) {
+  if (rank == 0) {
+    return;
+  }
+  if (mpi_size % 2 == 0 && rank == mpi_size - 1) {
+    return;
+  }
+  if (rank % 2 == 0) {
+    RightProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+  } else {
+    LeftProcAct(rank, local_arr, local_arr_size, arrays_sizes, comm);
+  }
 }
 
 bool BelovEBubbleSortMPI::RunImpl() {
@@ -145,11 +149,9 @@ bool BelovEBubbleSortMPI::RunImpl() {
 
   for (int i = 0; i < mpi_size + 1; i++) {
     if (i % 2 == 0) {
-        EvenPhase(rank, mpi_size,
-        local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
+      EvenPhase(rank, mpi_size, local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
     } else {
-        OddPhase(rank, mpi_size,
-        local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
+      OddPhase(rank, mpi_size, local_arr, local_arr_size, arrays_sizes, MPI_COMM_WORLD);
     }
   }
 

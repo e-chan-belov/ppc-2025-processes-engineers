@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <string>
+#include <array>
 #include <cstddef>
 #include <fstream>
-#include <array>
+#include <string>
 #include <tuple>
 
 #include "belov_e_bubble_sort/common/include/common.hpp"
