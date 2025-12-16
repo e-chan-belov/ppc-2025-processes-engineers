@@ -49,7 +49,7 @@ std::vector<int> LeftMerge(const std::vector<int> &left, const std::vector<int> 
 
   std::ranges::merge(left, right, std::back_inserter(result));
 
-  return {result.begin(), std::next(result.begin(), left.size())};
+  return {result.begin(), std::next(result.begin(), static_cast<std::vector<int>::difference_type>(left.size()))};
 }
 std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int> &right) {
   std::vector<int> result;
@@ -57,7 +57,7 @@ std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int>
 
   std::ranges::merge(left, right, std::back_inserter(result));
 
-  return {std::prev(result.end(), right.size()), result.end()};
+  return {std::prev(result.end(), static_cast<std::vector<int>::difference_type>(right.size())), result.end()};
 }
 
 void LeftProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, std::vector<int> &arrays_sizes,

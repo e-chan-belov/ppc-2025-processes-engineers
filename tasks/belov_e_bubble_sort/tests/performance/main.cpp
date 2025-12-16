@@ -16,7 +16,7 @@ class BelovEBubbleSortRunPerfTestsProcesses : public ppc::util::BaseRunPerfTests
   void SetUp() override {
     input_data_.resize(size_params_);
     for (size_t i = 0; i < size_params_; i++) {
-      input_data_[i] = static_cast<int>(size_params_) - i;
+      input_data_[i] = static_cast<int>(size_params_) - static_cast<int>(i);
     }
   }
 

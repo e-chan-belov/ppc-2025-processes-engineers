@@ -35,7 +35,7 @@ class BelovEBubbleSortRunFuncTestsProcesses : public ppc::util::BaseRunFuncTests
     file.close();
   }
   bool CheckTestOutputData(OutType &output_data) final {
-    return std::is_sorted(output_data.begin(), output_data.end());
+    return std::ranges::is_sorted(output_data);
   }
 
   InType GetTestInputData() final {
