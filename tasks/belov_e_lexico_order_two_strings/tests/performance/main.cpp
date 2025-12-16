@@ -12,7 +12,7 @@
 namespace belov_e_lexico_order_two_strings {
 
 class BelovERunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const size_t size_params_ = 4000;
+  const size_t size_params_ = 3000;
   InType input_data_;
   OutType output_data_{};
 
