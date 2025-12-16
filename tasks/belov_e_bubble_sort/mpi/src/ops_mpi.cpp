@@ -15,9 +15,6 @@ namespace belov_e_bubble_sort {
 BelovEBubbleSortMPI::BelovEBubbleSortMPI(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  std::vector<int> temp;
-  temp.resize(GetInput().size());
-  GetOutput() = temp;
 }
 
 bool BelovEBubbleSortMPI::ValidationImpl() {

@@ -10,9 +10,6 @@ namespace belov_e_bubble_sort {
 BelovEBubbleSortSEQ::BelovEBubbleSortSEQ(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
-  std::vector<int> temp;
-  temp.resize(GetInput().size());
-  GetOutput() = temp;
 }
 
 bool BelovEBubbleSortSEQ::ValidationImpl() {
@@ -29,7 +26,8 @@ bool BelovEBubbleSortSEQ::RunImpl() {
 
   int temp = 0;
 
-  std::vector<int> &out = GetOutput();
+  std::vector<int> out;
+  out.resize(n);
   for (size_t i = 0; i < n; out[n - i - 1] = data[n - i - 1], i++) {
     for (size_t j = 0; j < n - i - 1; j++) {
       if (data[j] > data[j + 1]) {
@@ -39,6 +37,7 @@ bool BelovEBubbleSortSEQ::RunImpl() {
       }
     }
   }
+  GetOutput() = out;
   return true;
 }
 
