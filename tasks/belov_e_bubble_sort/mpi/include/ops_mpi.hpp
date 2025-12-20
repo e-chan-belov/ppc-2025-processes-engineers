@@ -20,7 +20,6 @@ class BelovEBubbleSortMPI : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 };
-int CeilDiv(int a, int b);
 void BubbleSort(std::vector<int> &arr);
 std::vector<int> LeftMerge(const std::vector<int> &left, const std::vector<int> &right);
 std::vector<int> RightMerge(const std::vector<int> &left, const std::vector<int> &right);

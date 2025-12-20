@@ -25,10 +25,6 @@ bool BelovEBubbleSortMPI::PreProcessingImpl() {
   return true;
 }
 
-int CeilDiv(int a, int b) {
-  return (a + b - 1) / b;
-}
-
 void BubbleSort(std::vector<int> &arr) {
   const std::size_t n = arr.size();
   for (std::size_t i = 0; i < n; ++i) {
