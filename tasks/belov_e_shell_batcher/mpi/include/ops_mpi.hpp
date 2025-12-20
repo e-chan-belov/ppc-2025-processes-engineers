@@ -1,8 +1,8 @@
 #pragma once
 
+#include <limits.h>
 #include <mpi.h>
 
-#include <limits.h>
 #include <utility>
 
 #include "belov_e_shell_batcher/common/include/common.hpp"
@@ -10,21 +10,23 @@
 
 namespace belov_e_shell_batcher {
 class BelovEShellBatcherMPI : public BaseTask {
-public:
-    static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
-        return ppc::task::TypeOfTask::kMPI;
-    }
-    explicit BelovEShellBatcherMPI(const InType &in);
+ public:
+  static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
+    return ppc::task::TypeOfTask::kMPI;
+  }
+  explicit BelovEShellBatcherMPI(const InType &in);
 
-    bool ValidationImpl() override;
-    bool PreProcessingImpl() override;
-    bool RunImpl() override;
-    bool PostProcessingImpl() override;
+  bool ValidationImpl() override;
+  bool PreProcessingImpl() override;
+  bool RunImpl() override;
+  bool PostProcessingImpl() override;
 };
-void ShellSort(std::vector<int>& arr);
+void ShellSort(std::vector<int> &arr);
 std::pair<int, int> CompAndSwap(const int &a1, const int &a2);
-std::vector<int> BatcherLeftMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size, int rank, MPI_Comm comm);
-std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size, int rank, MPI_Comm comm);
+std::vector<int> BatcherLeftMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+                                  int rank, MPI_Comm comm);
+std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+                                   int rank, MPI_Comm comm);
 void LeftProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
 void RightProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
 void EvenPhase(int rank, int mpi_size, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);

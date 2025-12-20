@@ -5,42 +5,42 @@
 namespace belov_e_shell_batcher {
 
 BelovEShellBatcherSEQ::BelovEShellBatcherSEQ(const InType &in) {
-    SetTypeOfTask(GetStaticTypeOfTask());
-    GetInput() = in;
+  SetTypeOfTask(GetStaticTypeOfTask());
+  GetInput() = in;
 }
 
 bool BelovEShellBatcherSEQ::ValidationImpl() {
-    return !GetInput().empty();
+  return !GetInput().empty();
 }
-  
+
 bool BelovEShellBatcherSEQ::PreProcessingImpl() {
-    return true;
+  return true;
 }
 
 bool BelovEShellBatcherSEQ::RunImpl() {
-    std::vector<int> data = GetInput();
-    size_t n = data.size();
+  std::vector<int> data = GetInput();
+  size_t n = data.size();
 
-    for (size_t gap = n / 2; gap > 0; gap /= 2) {
-        for (size_t i = gap; i < n; i++) {
-            int temp = data[i];
-            size_t j = i;
+  for (size_t gap = n / 2; gap > 0; gap /= 2) {
+    for (size_t i = gap; i < n; i++) {
+      int temp = data[i];
+      size_t j = i;
 
-            while (j >= gap && data[j - gap] > temp) {
-                data[j] = data[j - gap];
-                j -= gap;
-            }
+      while (j >= gap && data[j - gap] > temp) {
+        data[j] = data[j - gap];
+        j -= gap;
+      }
 
-            data[j] = temp;
-        }
+      data[j] = temp;
     }
+  }
 
-    GetOutput() = data;
-    return true;
+  GetOutput() = data;
+  return true;
 }
 
 bool BelovEShellBatcherSEQ::PostProcessingImpl() {
-    return true;
-  }
+  return true;
+}
 
 }  // namespace belov_e_shell_batcher
