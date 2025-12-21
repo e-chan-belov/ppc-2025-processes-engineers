@@ -70,7 +70,6 @@ std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<
   }
   int i = 0;
   while (left_arr.size() < static_cast<size_t>(local_arr_size)) {
-
     std::pair<int, int> comp = {even_arr[i + 1], odd_arr[i]};
     if (comp.first > comp.second) {
       comp = {comp.second, comp.first};
@@ -124,7 +123,6 @@ std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector
     i = (static_cast<size_t>(local_arr_size) - 1) / 2;
   }
   for (; i + 1 < even_arr.size() && i < odd_arr.size(); i++) {
-
     std::pair<int, int> comp = {even_arr[i + 1], odd_arr[i]};
     if (comp.first > comp.second) {
       comp = {comp.second, comp.first};
