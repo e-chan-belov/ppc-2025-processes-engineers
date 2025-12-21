@@ -42,13 +42,6 @@ void ShellSort(std::vector<int> &arr) {
   }
 }
 
-std::pair<int, int> CompAndSwap(const int &a1, const int &a2) {
-  if (a1 > a2) {
-    return {a2, a1};
-  }
-  return {a1, a2};
-}
-
 std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
                                   int local_arr_size, int rank, MPI_Comm comm) {
   std::vector<int> even_arr1;
@@ -77,7 +70,12 @@ std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<
   }
   int i = 0;
   while (left_arr.size() < static_cast<size_t>(local_arr_size)) {
-    std::pair<int, int> comp = CompAndSwap(even_arr[i + 1], odd_arr[i]);
+
+    std::pair<int, int> comp = {even_arr[i + 1], odd_arr[i]};
+    if (comp.first > comp.second) {
+      comp = {comp.second, comp.first};
+    }
+
     left_arr.push_back(comp.first);
     if (left_arr.size() < static_cast<size_t>(local_arr_size)) {
       left_arr.push_back(comp.second);
@@ -114,14 +112,24 @@ std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector
   size_t i = 0;
   if (local_arr_size % 2 == 0) {
     i = (static_cast<size_t>(local_arr_size) / 2) - 1;
-    std::pair<int, int> comp = CompAndSwap(even_arr[i + 1], odd_arr[i]);
+
+    std::pair<int, int> comp = {even_arr[i + 1], odd_arr[i]};
+    if (comp.first > comp.second) {
+      comp = {comp.second, comp.first};
+    }
+
     right_arr.push_back(comp.second);
     i++;
   } else {
     i = (static_cast<size_t>(local_arr_size) - 1) / 2;
   }
   for (; i + 1 < even_arr.size() && i < odd_arr.size(); i++) {
-    std::pair<int, int> comp = CompAndSwap(even_arr[i + 1], odd_arr[i]);
+
+    std::pair<int, int> comp = {even_arr[i + 1], odd_arr[i]};
+    if (comp.first > comp.second) {
+      comp = {comp.second, comp.first};
+    }
+
     right_arr.push_back(comp.first);
     right_arr.push_back(comp.second);
   }

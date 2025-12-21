@@ -22,7 +22,6 @@ class BelovEShellBatcherMPI : public BaseTask {
   bool PostProcessingImpl() override;
 };
 void ShellSort(std::vector<int> &arr);
-std::pair<int, int> CompAndSwap(const int &a1, const int &a2);
 std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
                                   int local_arr_size, int rank, MPI_Comm comm);
 std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
