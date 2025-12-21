@@ -2,7 +2,6 @@
 
 #include <mpi.h>
 
-#include <utility>
 #include <vector>
 
 #include "belov_e_shell_batcher/common/include/common.hpp"
