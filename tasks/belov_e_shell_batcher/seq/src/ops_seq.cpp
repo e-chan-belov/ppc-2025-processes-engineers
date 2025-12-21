@@ -1,7 +1,7 @@
 #include "belov_e_shell_batcher/seq/include/ops_seq.hpp"
 
-#include <vector>
 #include <cstddef>
+#include <vector>
 
 #include "belov_e_shell_batcher/common/include/common.hpp"
 

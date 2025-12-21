@@ -49,8 +49,8 @@ std::pair<int, int> CompAndSwap(const int &a1, const int &a2) {
   return {a1, a2};
 }
 
-std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
-                                  int rank, MPI_Comm comm) {
+std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
+                                  int local_arr_size, int rank, MPI_Comm comm) {
   std::vector<int> even_arr1;
   even_arr1.reserve(local_arr_size);
   std::vector<int> even_arr2;
@@ -87,8 +87,8 @@ std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<
   return left_arr;
 }
 
-std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
-                                   int rank, MPI_Comm comm) {
+std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
+                                   int local_arr_size, int rank, MPI_Comm comm) {
   std::vector<int> odd_arr1;
   odd_arr1.reserve(local_arr_size);
   std::vector<int> odd_arr2;

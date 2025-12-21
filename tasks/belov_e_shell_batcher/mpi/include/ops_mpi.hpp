@@ -23,10 +23,10 @@ class BelovEShellBatcherMPI : public BaseTask {
 };
 void ShellSort(std::vector<int> &arr);
 std::pair<int, int> CompAndSwap(const int &a1, const int &a2);
-std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
-                                  int rank, MPI_Comm comm);
-std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
-                                   int rank, MPI_Comm comm);
+std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
+                                  int local_arr_size, int rank, MPI_Comm comm);
+std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr,
+                                   int local_arr_size, int rank, MPI_Comm comm);
 void LeftProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
 void RightProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
 void EvenPhase(int rank, int mpi_size, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
