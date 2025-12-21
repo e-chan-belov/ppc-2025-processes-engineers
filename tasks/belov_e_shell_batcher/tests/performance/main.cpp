@@ -10,7 +10,7 @@
 
 namespace belov_e_shell_batcher {
 class BelovEShellBatcherRunPerfTestsProcesses : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const size_t size_params_ = 200000;
+  const size_t size_params_ = 500000;
   InType input_data_;
 
   void SetUp() override {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <limits.h>
 #include <mpi.h>
 
 #include <utility>
+#include <vector>
 
 #include "belov_e_shell_batcher/common/include/common.hpp"
 #include "task/include/task.hpp"
@@ -23,9 +23,9 @@ class BelovEShellBatcherMPI : public BaseTask {
 };
 void ShellSort(std::vector<int> &arr);
 std::pair<int, int> CompAndSwap(const int &a1, const int &a2);
-std::vector<int> BatcherLeftMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
                                   int rank, MPI_Comm comm);
-std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
                                    int rank, MPI_Comm comm);
 void LeftProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);
 void RightProcAct(int rank, std::vector<int> &local_arr, int local_arr_size, MPI_Comm comm);

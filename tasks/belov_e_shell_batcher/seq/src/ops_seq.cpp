@@ -1,5 +1,8 @@
 #include "belov_e_shell_batcher/seq/include/ops_seq.hpp"
 
+#include <vector>
+#include <cstddef>
+
 #include "belov_e_shell_batcher/common/include/common.hpp"
 
 namespace belov_e_shell_batcher {

@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <iterator>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -50,24 +49,24 @@ std::pair<int, int> CompAndSwap(const int &a1, const int &a2) {
   return {a1, a2};
 }
 
-std::vector<int> BatcherLeftMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+std::vector<int> BatcherLeftMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
                                   int rank, MPI_Comm comm) {
   std::vector<int> even_arr1;
   even_arr1.reserve(local_arr_size);
   std::vector<int> even_arr2;
   even_arr2.reserve(local_arr_size);
   for (int i = 0; i < local_arr_size; i += 2) {
-    even_arr1.push_back(left_arr_[i]);
+    even_arr1.push_back(input_left_arr[i]);
   }
   for (int i = 0; i < local_arr_size; i += 2) {
-    even_arr2.push_back(right_arr_[i]);
+    even_arr2.push_back(input_right_arr[i]);
   }
   std::vector<int> even_arr;
   even_arr.resize(even_arr1.size() + even_arr2.size());
   std::ranges::merge(even_arr1, even_arr2, even_arr.begin());
 
   std::vector<int> odd_arr;
-  odd_arr.resize(2 * static_cast<size_t>(local_arr_size) - even_arr.size());
+  odd_arr.resize((2 * static_cast<size_t>(local_arr_size)) - even_arr.size());
   MPI_Sendrecv(even_arr.data(), static_cast<int>(even_arr.size()), MPI_INT, rank + 1, 0, odd_arr.data(),
                static_cast<int>(odd_arr.size()), MPI_INT, rank + 1, 0, comm, MPI_STATUS_IGNORE);
 
@@ -88,17 +87,17 @@ std::vector<int> BatcherLeftMerge(std::vector<int> &left_arr_, std::vector<int> 
   return left_arr;
 }
 
-std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int> &right_arr_, int local_arr_size,
+std::vector<int> BatcherRightMerge(std::vector<int> &input_left_arr, std::vector<int> &input_right_arr, int local_arr_size,
                                    int rank, MPI_Comm comm) {
   std::vector<int> odd_arr1;
   odd_arr1.reserve(local_arr_size);
   std::vector<int> odd_arr2;
   odd_arr2.reserve(local_arr_size);
   for (int i = 1; i < local_arr_size; i += 2) {
-    odd_arr1.push_back(left_arr_[i]);
+    odd_arr1.push_back(input_left_arr[i]);
   }
   for (int i = 1; i < local_arr_size; i += 2) {
-    odd_arr2.push_back(right_arr_[i]);
+    odd_arr2.push_back(input_right_arr[i]);
   }
 
   std::vector<int> odd_arr;
@@ -106,7 +105,7 @@ std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int>
   std::ranges::merge(odd_arr1, odd_arr2, odd_arr.begin());
 
   std::vector<int> even_arr;
-  even_arr.resize(2 * static_cast<size_t>(local_arr_size) - odd_arr.size());
+  even_arr.resize((2 * static_cast<size_t>(local_arr_size)) - odd_arr.size());
   MPI_Sendrecv(odd_arr.data(), static_cast<int>(odd_arr.size()), MPI_INT, rank - 1, 0, even_arr.data(),
                static_cast<int>(even_arr.size()), MPI_INT, rank - 1, 0, comm, MPI_STATUS_IGNORE);
 
@@ -114,7 +113,7 @@ std::vector<int> BatcherRightMerge(std::vector<int> &left_arr_, std::vector<int>
   right_arr.reserve(local_arr_size);
   size_t i = 0;
   if (local_arr_size % 2 == 0) {
-    i = static_cast<size_t>(local_arr_size) / 2 - 1;
+    i = (static_cast<size_t>(local_arr_size) / 2) - 1;
     std::pair<int, int> comp = CompAndSwap(even_arr[i + 1], odd_arr[i]);
     right_arr.push_back(comp.second);
     i++;
@@ -191,7 +190,7 @@ bool BelovEShellBatcherMPI::RunImpl() {
   }
   MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-  int garbage = (n % mpi_size == 0) ? 0 : (mpi_size - n % mpi_size);
+  int garbage = (n % mpi_size == 0) ? 0 : (mpi_size - (n % mpi_size));
 
   if (rank == 0) {
     for (int i = 0; i < garbage; i++) {
